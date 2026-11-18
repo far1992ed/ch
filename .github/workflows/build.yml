@@ -1,4 +1,4 @@
-herename: ZIP to APK
+name: ZIP to APK
 
 on:
   workflow_dispatch:
@@ -24,11 +24,12 @@ jobs:
           unzip -q gradle-8.0-bin.zip
           echo "$(pwd)/gradle-8.0/bin" >> $GITHUB_PATH
 
-      - name: Unzip game into assets
+      - name: Download Game ZIP from Release
         run: |
+          # استبدل الرابط أدناه برابط ملف game.zip من الـ Releases
+          wget "PUT_YOUR_LINK_HERE" -O game.zip
           mkdir -p app/src/main/assets
           unzip -o game.zip -d app/src/main/assets/
-          ls app/src/main/assets/ | head -20
 
       - name: Create project files
         run: |
