@@ -19,81 +19,62 @@ jobs:
           
       - name: Setup Project
         run: |
-          mkdir -p app/src/main/java/com/game/app app/src/main/assets
-          unzip -o game.zip -d app/src/main/assets/
+          mkdir -p app/src/main/java/com/game/app app/src/main/assets temp_unzip
           
-          # 1. إعداد ملف settings.gradle (باستخدام pluginManagement)
+          # 1. فك الضغط في مجلد مؤقت
+          unzip -o game.zip -d temp_unzip/
+          
+          # 2. البحث عن ملف index.html ونقل محتوياته للجذر الصحيح
+          INDEX_PATH=$(find temp_unzip -name "index.html" | head -n 1)
+          if [ -n "$INDEX_PATH" ]; then
+            DIR_PATH=$(dirname "$INDEX_PATH")
+            echo "Found index.html in: $DIR_PATH"
+            cp -r "$DIR_PATH"/* app/src/main/assets/
+          else
+            echo "WARNING: index.html not found! Copying everything just in case."
+            cp -r temp_unzip/* app/src/main/assets/
+          fi
+          
+          # 3. إعداد ملفات المشروع
           cat > settings.gradle << 'EOF'
           pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
+              repositories { google(); mavenCentral(); gradlePluginPortal() }
           }
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
+              repositories { google(); mavenCentral() }
           }
           rootProject.name = "Game"
           include ':app'
           EOF
           
-          # 2. إعداد ملف build.gradle الرئيسي (فارغ تقريباً، يعتمد على settings.gradle)
           cat > build.gradle << 'EOF'
-          plugins {
-              id 'com.android.application' version '8.1.4' apply false
-          }
+          plugins { id 'com.android.application' version '8.1.4' apply false }
           EOF
           
-          # 3. إعداد ملف gradle.properties
           cat > gradle.properties << 'EOF'
           android.useAndroidX=true
           org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
           EOF
           
-          # 4. إعداد ملف app/build.gradle (باستخدام plugins block)
           cat > app/build.gradle << 'EOF'
-          plugins {
-              id 'com.android.application'
-          }
+          plugins { id 'com.android.application' }
           android {
               namespace 'com.game.app'
               compileSdk 34
-              defaultConfig {
-                  applicationId "com.game.app"
-                  minSdk 21
-                  targetSdk 34
-                  versionCode 1
-                  versionName "1.0"
-              }
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                  }
-              }
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_1_8
-                  targetCompatibility JavaVersion.VERSION_1_8
-              }
+              defaultConfig { applicationId "com.game.app"; minSdk 21; targetSdk 34; versionCode 1; versionName "1.0" }
+              buildTypes { release { minifyEnabled false } }
+              compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
           }
-          dependencies {
-              implementation 'androidx.appcompat:appcompat:1.6.1'
-          }
+          dependencies { implementation 'androidx.appcompat:appcompat:1.6.1' }
           EOF
           
-          # 5. إنشاء MainActivity.java
           cat > app/src/main/java/com/game/app/MainActivity.java << 'EOF'
           package com.game.app;
-
           import android.os.Bundle;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
           import androidx.appcompat.app.AppCompatActivity;
-
           public class MainActivity extends AppCompatActivity {
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -111,19 +92,12 @@ jobs:
           }
           EOF
           
-          # 6. إنشاء AndroidManifest.xml
           cat > app/src/main/AndroidManifest.xml << 'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-permission android:name="android.permission.INTERNET" />
-              <application
-                  android:allowBackup="true"
-                  android:label="Game"
-                  android:supportsRtl="true"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
+              <application android:allowBackup="true" android:label="Game" android:supportsRtl="true" android:theme="@style/Theme.AppCompat.NoActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
@@ -135,7 +109,6 @@ jobs:
 
       - name: Build APK
         run: |
-          # استخدام Gradle 8.5 المتوافق مع AGP 8.1.4
           wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
           unzip -q gradle-8.5-bin.zip
           chmod +x gradle-8.5/bin/gradle
