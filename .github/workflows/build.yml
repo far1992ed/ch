@@ -15,8 +15,7 @@ jobs:
           
       - name: Download ZIP
         run: |
-          # هام: ضع رابط ملف الـ ZIP من قسم Releases هنا
-          wget "PUT_YOUR_LINK_HERE" -O game.zip
+          wget "https://github.com/far1992ed/ch/releases/download/v1.0/libstockfish.so.zip" -O game.zip
           
       - name: Setup Project
         run: |
