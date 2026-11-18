@@ -22,42 +22,126 @@ jobs:
           mkdir -p app/src/main/java/com/game/app app/src/main/assets
           unzip -o game.zip -d app/src/main/assets/
           
-          echo 'include ":app"' > settings.gradle
-          echo 'buildscript { repositories { google(); mavenCentral() } dependencies { classpath "com.android.tools.build:gradle:8.1.4" } } allprojects { repositories { google(); mavenCentral() } }' > build.gradle
-          echo 'android.useAndroidX=true' > gradle.properties
+          # 1. إعداد ملف settings.gradle (باستخدام pluginManagement)
+          cat > settings.gradle << 'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "Game"
+          include ':app'
+          EOF
           
-          echo 'apply plugin: "com.android.application"
-          android { namespace "com.game.app"; compileSdk 34; defaultConfig { applicationId "com.game.app"; minSdk 21; targetSdk 34 } }' > app/build.gradle
+          # 2. إعداد ملف build.gradle الرئيسي (فارغ تقريباً، يعتمد على settings.gradle)
+          cat > build.gradle << 'EOF'
+          plugins {
+              id 'com.android.application' version '8.1.4' apply false
+          }
+          EOF
           
-          echo 'package com.game.app;
+          # 3. إعداد ملف gradle.properties
+          cat > gradle.properties << 'EOF'
+          android.useAndroidX=true
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          EOF
+          
+          # 4. إعداد ملف app/build.gradle (باستخدام plugins block)
+          cat > app/build.gradle << 'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+          android {
+              namespace 'com.game.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.game.app"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0"
+              }
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                  }
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_1_8
+                  targetCompatibility JavaVersion.VERSION_1_8
+              }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+          }
+          EOF
+          
+          # 5. إنشاء MainActivity.java
+          cat > app/src/main/java/com/game/app/MainActivity.java << 'EOF'
+          package com.game.app;
+
           import android.os.Bundle;
           import android.webkit.WebView;
+          import android.webkit.WebViewClient;
           import androidx.appcompat.app.AppCompatActivity;
+
           public class MainActivity extends AppCompatActivity {
-              protected void onCreate(Bundle b) { super.onCreate(b);
-                  WebView w = new WebView(this);
-                  w.getSettings().setJavaScriptEnabled(true);
-                  w.loadUrl("file:///android_asset/index.html");
-                  setContentView(w);
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  WebView web = new WebView(this);
+                  web.getSettings().setJavaScriptEnabled(true);
+                  web.getSettings().setDomStorageEnabled(true);
+                  web.getSettings().setAllowFileAccess(true);
+                  web.getSettings().setAllowFileAccessFromFileURLs(true);
+                  web.getSettings().setAllowUniversalAccessFromFileURLs(true);
+                  web.setWebViewClient(new WebViewClient());
+                  web.loadUrl("file:///android_asset/index.html");
+                  setContentView(web);
               }
-          }' > app/src/main/java/com/game/app/MainActivity.java
+          }
+          EOF
           
-          echo '<?xml version="1.0" encoding="utf-8"?>
+          # 6. إنشاء AndroidManifest.xml
+          cat > app/src/main/AndroidManifest.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application android:label="Game" android:theme="@style/Theme.AppCompat.NoActionBar">
-                  <activity android:name=".MainActivity" android:exported="true">
-                      <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+              <uses-permission android:name="android.permission.INTERNET" />
+              <application
+                  android:allowBackup="true"
+                  android:label="Game"
+                  android:supportsRtl="true"
+                  android:theme="@style/Theme.AppCompat.NoActionBar">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
                   </activity>
               </application>
-          </manifest>' > app/src/main/AndroidManifest.xml
+          </manifest>
+          EOF
 
       - name: Build APK
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip
-          unzip -q gradle-8.0-bin.zip
-          ./gradle-8.0/bin/gradle wrapper
+          # استخدام Gradle 8.5 المتوافق مع AGP 8.1.4
+          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+          unzip -q gradle-8.5-bin.zip
+          chmod +x gradle-8.5/bin/gradle
+          ./gradle-8.5/bin/gradle wrapper
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
