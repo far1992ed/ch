@@ -1,0 +1,27 @@
+{
+  "name": "مُحدِّد الأنمي والمسلسلات من الصورة",
+  "short_name": "محدد المشاهد",
+  "description": "تعرّف على اسم الأنمي أو المسلسل ورقم الحلقة والدقيقة من لقطة شاشة واحدة",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
