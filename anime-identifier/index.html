@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="حدّد اسم الأنمي ورقم الحلقة والدقيقة من لقطة شاشة واحدة" />
-  <title>مُحدِّد الأنمي من الصورة | Anime Snapshot Identifier</title>
+  <meta name="description" content="حدّد اسم الأنمي أو المسلسل ورقم الحلقة والدقيقة من لقطة شاشة واحدة" />
+  <title>مُحدِّد المشاهد من الصورة | Anime Snapshot Identifier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="محدد المشاهد" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -17,12 +24,18 @@
   <header class="header">
     <div class="logo">
       <span class="logo-icon">🎬</span>
-      <h1>مُحدِّد الأنمي</h1>
+      <h1>مُحدِّد المشاهد</h1>
     </div>
-    <p class="tagline">ارفع لقطة شاشة لمشهد... وسنعرف لك: اسم الأنمي، رقم الحلقة، والدقيقة</p>
+    <p class="tagline">ارفع لقطة شاشة... وسنعرف لك: اسم الأنمي أو المسلسل، رقم الحلقة، والدقيقة</p>
   </header>
 
   <main class="container">
+    <!-- التبويبات -->
+    <nav class="tabs">
+      <button class="tab active" data-mode="anime">🎬 أنمي <span class="tag-acc">دقة عالية</span></button>
+      <button class="tab" data-mode="series">📺 مسلسلات وأفلام <span class="tag-beta">Beta</span></button>
+    </nav>
+
     <!-- منطقة الرفع -->
     <section class="upload-card" id="dropZone">
       <div class="upload-icon">🖼️</div>
@@ -38,7 +51,7 @@
     </section>
 
     <!-- زر البحث -->
-    <button class="btn btn-search" id="searchBtn" disabled>🔍 ابحث عن الأنمي</button>
+    <button class="btn btn-search" id="searchBtn" disabled>🔍 ابحث</button>
 
     <!-- حالة البحث -->
     <section id="status" class="status" hidden></section>
@@ -48,6 +61,7 @@
   </main>
 
   <footer class="footer">
+    <button class="btn btn-install" id="installBtn" hidden>📲 ثبّت التطبيق على جهازك</button>
     <p>يعمل بمساعدة <a href="https://trace.moe" target="_blank" rel="noopener">trace.moe</a> و <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> — مفتوح المصدر على GitHub</p>
   </footer>
 
