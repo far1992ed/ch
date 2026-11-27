@@ -4,64 +4,63 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0e17">
-<title>AnimeX — أنمي ومسلسلات مجاناً</title>
-<meta name="description" content="شاهد أنمي ومسلسلات مجاناً بجودات متعددة، مترجم ومدبلج، مع تنزيل عبر ADM أو تنزيل مباشر.">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>AnimeX — انمي ومسلسلات مجانا</title>
+<meta name="description" content="شاهد انمي ومسلسلات مجانا بجودات متعددة مترجم ومدبلج مع تنزيل ADM او مباشر">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <header class="topbar">
   <a class="logo" href="index.html"><span class="logo-x">Ani</span><span class="logo-x2">meX</span></a>
   <nav class="main-nav">
     <a href="index.html" class="nav-link active">الرئيسية</a>
-    <a href="#" class="nav-link" data-tab="anime">الأنمي</a>
+    <a href="#" class="nav-link" data-tab="anime">الانمي</a>
     <a href="#" class="nav-link" data-tab="series">المسلسلات</a>
     <a href="watchlist.html" class="nav-link">قائمتي</a>
   </nav>
   <div class="search-wrap">
-    <input id="searchBox" class="search-input" type="search" placeholder="ابحث عن أنمي أو مسلسل..." autocomplete="off">
+    <input id="searchBox" class="search-input" type="search" placeholder="ابحث عن انمي او مسلسل..." autocomplete="off">
   </div>
-  <button id="themeToggle" class="icon-btn" title="تبديل الوضع" aria-label="تبديل الوضع">🌓</button>
+  <button id="themeToggle" class="icon-btn" title="تبديل الوضع">🌓</button>
 </header>
-
 <div class="hero">
   <div class="hero-inner">
-    <h1 class="hero-title">شاهد <span class="grad">أنمي ومسلسلات</span> مجاناً</h1>
-    <p class="hero-sub">جودات متعددة • مترجم ومدبلج • تنزيل بـ ADM أو مباشر</p>
+    <h1 class="hero-title">شاهد <span class="grad">انمي ومسلسلات</span> مجانا</h1>
+    <p class="hero-sub">جودات متعددة • مترجم ومدبلج • تنزيل ب ADM او مباشر</p>
     <div class="hero-badges">
-      <span class="badge">100% مجاني</span>
+      <span class="badge">مجاني 100%</span>
       <span class="badge">مترجم + مدبلج</span>
       <span class="badge">بدون تسجيل</span>
     </div>
   </div>
 </div>
-
 <main id="app">
   <section id="homeView">
     <div class="tabs-bar">
-      <button class="tab-btn active" data-tab="anime">🎌 الأنمي</button>
-      <button class="tab-btn" data-tab="series">🎬 المسلسلات</button>
+      <button class="tab-btn active" data-tab="anime">الانمي</button>
+      <button class="tab-btn" data-tab="series">المسلسلات</button>
     </div>
-
     <div id="animePane" class="pane">
-      <div class="row-head"><h2>🔥 الأكثر شعبية</h2><a class="see-all" href="#" data-link="anime-top">الكل ←</a></div>
+      <div class="row-head"><h2>الاكثر شعبية</h2></div>
       <div id="animeTop" class="grid"></div>
-      <div class="row-head"><h2>📺 هذا الموسم</h2></div>
+      <div class="row-head"><h2>هذا الموسم</h2></div>
       <div id="animeSeason" class="grid"></div>
     </div>
-
     <div id="seriesPane" class="pane hidden">
-      <div class="row-head"><h2>🔥 الأكثر شعبية</h2><a class="see-all" href="#" data-link="series-top">الكل ←</a></div>
+      <div class="row-head"><h2>الاكثر شعبية</h2></div>
       <div id="seriesTop" class="grid"></div>
-      <div class="row-head"><h2>🆕 يُعرض الآن</h2></div>
+      <div class="row-head"><h2>يعرض الآن</h2></div>
       <div id="seriesRunning" class="grid"></div>
     </div>
   </section>
 </main>
-
+<footer>مصادر البيانات: MyAnimeList + TVMaze — المشاهدة عبر القنوات الرسمية المجانية</footer>
 <div id="toast" class="toast"></div>
-
 <script src="app.js"></script>
+<script src="app-ui.js"></script>
+<script src="player.js"></script>
+<script src="home.js"></script>
+<script src="events.js"></script>
+<script src="search.js"></script>
+<script src="init.js"></script>
 </body>
 </html>
