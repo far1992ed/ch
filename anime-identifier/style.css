@@ -55,6 +55,45 @@ body {
 }
 .tagline { color: var(--text-dim); margin-top: 8px; font-size: 0.95rem; }
 
+/* ===== التبويبات ===== */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+}
+.tab {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 10px;
+  background: var(--card);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tab:hover { border-color: var(--accent); color: var(--text); }
+.tab.active {
+  background: linear-gradient(90deg, rgba(124, 92, 255, 0.2), rgba(0, 212, 255, 0.15));
+  border-color: var(--accent);
+  color: var(--text);
+}
+.tag-acc, .tag-beta {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.tag-acc { background: rgba(46, 204, 113, 0.15); color: var(--success); }
+.tag-beta { background: rgba(231, 76, 60, 0.15); color: var(--danger); }
+
 /* ===== الحاوية ===== */
 .container {
   position: relative;
@@ -124,6 +163,14 @@ body {
   padding: 8px 18px;
 }
 .btn-ghost:hover { color: var(--danger); border-color: var(--danger); }
+
+.btn-install {
+  display: block;
+  margin: 0 auto 14px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-size: 0.95rem;
+}
 
 /* ===== معاينة الصورة ===== */
 .preview-box {
@@ -235,6 +282,17 @@ body {
 .more-link { display: inline-block; margin-top: 14px; color: var(--accent-2); font-size: 0.85rem; text-decoration: none; }
 .more-link:hover { text-decoration: underline; }
 
+/* ملاحظة ميزة Beta */
+.beta-note {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
 /* ===== التذييل ===== */
 .footer {
   position: relative;
@@ -253,4 +311,6 @@ body {
   .logo h1 { font-size: 1.6rem; }
   .result-top { flex-direction: column; align-items: center; text-align: center; }
   .badges { justify-content: center; }
+  .tabs { flex-direction: row; }
+  .tab { font-size: 0.8rem; }
 }
