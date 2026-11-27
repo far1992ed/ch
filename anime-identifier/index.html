@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="حدّد اسم الأنمي ورقم الحلقة والدقيقة من لقطة شاشة واحدة" />
+  <title>مُحدِّد الأنمي من الصورة | Anime Snapshot Identifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">🎬</span>
+      <h1>مُحدِّد الأنمي</h1>
+    </div>
+    <p class="tagline">ارفع لقطة شاشة لمشهد... وسنعرف لك: اسم الأنمي، رقم الحلقة، والدقيقة</p>
+  </header>
+
+  <main class="container">
+    <!-- منطقة الرفع -->
+    <section class="upload-card" id="dropZone">
+      <div class="upload-icon">🖼️</div>
+      <p class="upload-title">اسحب الصورة وأفلتها هنا</p>
+      <p class="upload-sub">أو</p>
+      <button class="btn btn-primary" id="pickBtn">اختر صورة من جهازك</button>
+      <input type="file" id="fileInput" accept="image/*" hidden />
+      <p class="upload-hint">PNG · JPG · WEBP — أفضل نتيجة عندما يظهر المشهد بوضوح</p>
+      <div id="previewBox" class="preview-box" hidden>
+        <img id="previewImg" alt="لقطة الشاشة المرفوعة" />
+        <button class="btn btn-ghost" id="resetBtn">إلغاء 🗑️</button>
+      </div>
+    </section>
+
+    <!-- زر البحث -->
+    <button class="btn btn-search" id="searchBtn" disabled>🔍 ابحث عن الأنمي</button>
+
+    <!-- حالة البحث -->
+    <section id="status" class="status" hidden></section>
+
+    <!-- النتائج -->
+    <section id="results" class="results" hidden></section>
+  </main>
+
+  <footer class="footer">
+    <p>يعمل بمساعدة <a href="https://trace.moe" target="_blank" rel="noopener">trace.moe</a> و <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> — مفتوح المصدر على GitHub</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
