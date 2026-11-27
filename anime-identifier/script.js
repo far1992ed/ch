@@ -1,7 +1,9 @@
 /* ============================================================
-   Anime Snapshot Identifier
+   Anime & Series Snapshot Identifier
    1) trace.moe API  -> anime name + episode + timestamp (free)
-   2) AniList GraphQL -> extra details (cover, score...)
+   2) AniList GraphQL -> extra anime details (cover, score...)
+   3) Series/movies   -> reverse image search links (Beta)
+   4) PWA             -> service worker + install prompt
    ============================================================ */
 
 'use strict';
@@ -15,8 +17,22 @@ const resetBtn   = document.getElementById('resetBtn');
 const searchBtn  = document.getElementById('searchBtn');
 const statusEl   = document.getElementById('status');
 const resultsEl  = document.getElementById('results');
+const installBtn = document.getElementById('installBtn');
+const tabs       = document.querySelectorAll('.tab');
 
 let selectedFile = null;
+let currentMode = 'anime'; // 'anime' | 'series'
+
+// ---------- tabs ----------
+tabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    tabs.forEach((t) => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMode = tab.dataset.mode;
+    hideStatus();
+    hideResults();
+  });
+});
 
 // ---------- pick image ----------
 pickBtn.addEventListener('click', () => fileInput.click());
@@ -83,20 +99,25 @@ function hideResults() {
 searchBtn.addEventListener('click', async () => {
   if (!selectedFile) return;
   hideResults();
-  showStatus('جارٍ البحث في ملايين المشاهد... قد يستغرق ثوانٍ', 'loading');
-  searchBtn.disabled = true;
-  try {
-    const best = await identifyAnime(selectedFile);
-    hideStatus();
-    renderResults(best);
-  } catch (err) {
-    showStatus('❌ ' + (err.message || 'حدث خطأ أثناء البحث، حاول مرة أخرى'), 'error');
-  } finally {
-    searchBtn.disabled = false;
+
+  if (currentMode === 'anime') {
+    showStatus('جارٍ البحث في ملايين مشاهد الأنمي... قد يستغرق ثوانٍ', 'loading');
+    searchBtn.disabled = true;
+    try {
+      const best = await identifyAnime(selectedFile);
+      hideStatus();
+      renderResults(best);
+    } catch (err) {
+      showStatus('❌ ' + (err.message || 'حدث خطأ أثناء البحث، حاول مرة أخرى'), 'error');
+    } finally {
+      searchBtn.disabled = false;
+    }
+  } else {
+    renderSeriesResults();
   }
 });
 
-// ---------- trace.moe API ----------
+// ---------- trace.moe API (anime) ----------
 async function identifyAnime(file) {
   const base64 = await fileToBase64(file);
 
@@ -123,7 +144,7 @@ async function identifyAnime(file) {
   return { top: filtered[0], others: filtered.slice(1, 4) };
 }
 
-// ---------- render results ----------
+// ---------- render anime results ----------
 async function renderResults(payload) {
   const top = payload.top;
   const others = payload.others;
@@ -239,6 +260,100 @@ async function enrichTopCard(top) {
   } catch (err) {
     /* optional enrichment - ignore failure */
   }
+}
+
+// ---------- series/movies: reverse image search (Beta) ----------
+function renderSeriesResults() {
+  resultsEl.hidden = false;
+  resultsEl.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'result-card';
+
+  card.innerHTML = `
+    <h2>🔍 البحث عن المسلسل أو الفيلم</h2>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin-top: 6px;">
+      هذه ميزة تجريبية (Beta). سنفتح لك محركات البحث العكسي بالصورة التي رفعتها —
+      ابحث في النتائج عن اسم المسلسل أو الفيلم والمشهد.
+    </p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px;">
+      <button class="btn btn-primary" id="lensBtn">🔎 Google Lens</button>
+      <button class="btn btn-primary" id="yandexBtn">🪆 Yandex</button>
+      <button class="btn btn-primary" id="bingBtn">🌐 Bing</button>
+    </div>
+    <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 14px;">
+      نصيحة: جرّب أكثر من محرك — Yandex قوي جداً في التعرف على المشاهد، وGoogle Lens الأفضل في الصور الواضحة.
+    </p>
+    <div class="beta-note">لماذا لا نعرف رقم الحلقة مباشرة؟ لا توجد قاعدة بيانات مجانية للمسلسلات مثلما هو الحال مع الأنمي (trace.moe). قد تضيف خدمات مدفوعة هذا مستقبلاً.</div>
+  `;
+
+  resultsEl.appendChild(card);
+
+  const openReverseSearch = (engine) => {
+    const dataURL = previewImg.src;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.enctype = 'multipart/form-data';
+    form.target = '_blank';
+
+    let action, fileField;
+    if (engine === 'yandex') {
+      action = 'https://yandex.com/images/search?rpt=imageview';
+      fileField = 'upfile';
+    } else if (engine === 'bing') {
+      action = 'https://www.bing.com/images/search?view=detailv2&iss=sbi';
+      fileField = 'imgurl:';
+    } else {
+      action = 'https://lens.google.com/upload';
+      fileField = 'encoded_image';
+    }
+
+    form.action = action;
+
+    const dt = new DataTransfer();
+    dt.items.add(new File([selectedFile], selectedFile.name || 'screenshot.jpg', { type: selectedFile.type || 'image/jpeg' }));
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.name = fileField;
+    input.files = dt.files;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  };
+
+  document.getElementById('lensBtn').addEventListener('click', () => openReverseSearch('lens'));
+  document.getElementById('yandexBtn').addEventListener('click', () => openReverseSearch('yandex'));
+  document.getElementById('bingBtn').addEventListener('click', () => openReverseSearch('bing'));
+}
+
+// ---------- PWA: install prompt ----------
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) installBtn.hidden = false;
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      alert('للتثبيت: افتح قائمة المتصفح ثم اختر "إضافة إلى الشاشة الرئيسية" أو "تثبيت التطبيق"');
+      return;
+    }
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    if (choice && choice.outcome === 'accepted') installBtn.hidden = true;
+    deferredPrompt = null;
+  });
+}
+
+// ---------- PWA: register service worker ----------
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 
 // ---------- helpers ----------
