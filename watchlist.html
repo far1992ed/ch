@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0e17">
+<title>قائمتي — AnimeX</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="watchlist">
+<header class="topbar">
+  <a class="logo" href="index.html"><span class="logo-x">Ani</span><span class="logo-x2">meX</span></a>
+  <nav class="main-nav">
+    <a href="index.html" class="nav-link">الرئيسية</a>
+    <a href="watchlist.html" class="nav-link active">قائمتي</a>
+  </nav>
+  <div class="search-wrap">
+    <input id="searchBox" class="search-input" type="search" placeholder="ابحث عن انمي او مسلسل..." autocomplete="off">
+  </div>
+  <button id="themeToggle" class="icon-btn" title="تبديل الوضع">🌓</button>
+</header>
+<main id="app"></main>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+<script src="app-ui.js"></script>
+<script src="player.js"></script>
+<script src="home.js"></script>
+<script src="events.js"></script>
+<script src="search.js"></script>
+<script src="init.js"></script>
+</body>
+</html>
