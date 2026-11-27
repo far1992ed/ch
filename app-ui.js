@@ -8,14 +8,14 @@ function renderDetail(it){
  var audio=it.kind==='anime'
   ?'<span class="pill ok" id="pillSub" onclick="switchAudio(\'sub\')">مترجم</span><span class="pill" id="pillDub" onclick="switchAudio(\'dub\')">مدبلج</span>'
   :'<span class="pill ok">مترجم (رسمي)</span>';
- app.innerHTML='<section><div class="detail-hero"><div class="detail-poster"><img src="'+it.poster+'" alt=""></div>'
+ app.innerHTML='<section><div class="detail-hero"><div class="detail-poster"><img src="'+img(it.poster)+'" onerror="imgFail(this)" alt=""></div>'
  +'<div class="detail-body"><h1>'+it.title+' '+(it.titleEn&&it.titleEn!==it.title?'<small style="color:var(--muted)">('+it.titleEn+')</small>':'')+'</h1>'
  +'<div class="detail-meta"><span class="pill '+(it.score>=8?'ok':'warn')+'">★ '+(it.score||'—')+'</span><span class="pill">'+(it.year||'—')+'</span><span class="pill">'+(it.episodes||'?')+' حلقة</span><span class="pill">'+((it.genres||[]).join(' • ')||'—')+'</span>'+audio+'</div>'
  +'<p class="synopsis" id="syn"></p>'
  +'<div class="dl-row" style="margin-top:18px"><button class="dl-btn native" onclick="openPlayer(\''+it.id+'\',1)">▶ شاهد الحلقة 1</button><button class="dl-btn copy" id="wlBtn" onclick="toggleWL()">'+(WL.has(it.id)?'✓ في قائمتي':'+ قائمتي')+'</button><button class="dl-btn copy" onclick="scrollDl()">⬇ التنزيل</button></div>'
  +'</div></div><h2 style="margin:24px 22px 12px">قائمة الحلقات</h2><div class="ep-list" id="epList"></div>'
- +'<div id="downloadZone"><h2 style="margin:24px 22px 12px">⬇ مركز التنزيل</h2><div class="dl-section dl-box"><input id="dlUrl" class="dl-input" type="url" dir="ltr" placeholder="ضع رابط الحلقة (mp4) هنا…"><div class="dl-row">'+dlBtns('dlUrl')+'</div>'
- +'<p class="dl-hint">ADM و 1DM: ثبّتهما من Google Play. يدعمان استكمال التنزيل والجودات المتعددة.</p></div></div></section>';
+ +'<div id="downloadZone"><h2 style="margin:24px 22px 12px">⬇ مركز التنزيل</h2><div class="dl-section dl-box"><input id="dlUrl" class="dl-input" type="url" dir="ltr" placeholder="ضع رابط الحلقة (mp4) هنا"><div class="dl-row">'+dlBtns('dlUrl')+'</div>'
+ +'<p class="dl-hint">ADM و 1DM: ثبتهما من Google Play. يدعمان استكمال التنزيل والجودات المتعددة.</p></div></div></section>';
  var syn=document.getElementById('syn');
  syn.innerHTML=short(it.synopsis,300)+(it.synopsis.length>300?' <span class="synopsis-more" onclick="expandSyn()">المزيد…</span>':'');
  syn.dataset.full='0';
@@ -35,4 +35,4 @@ function switchAudio(m){AUDIO=m;
  var s=document.getElementById('pillSub'),d=document.getElementById('pillDub');
  if(s)s.classList.toggle('ok',m==='sub');
  if(d)d.classList.toggle('ok',m==='dub');
- toast(m==='dub'?'الوضع: مدبلج — القناة الرسمية للدبلجة':'الوضع: مترجم');}
+ toast(m==='dub'?'الوضع: مدبلج':'الوضع: مترجم');}
